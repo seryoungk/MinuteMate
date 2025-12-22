@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const apiKey = "AIzaSyAHRYMqKZrlz0sk4Ao1Jh4iBUWPPSIXGTY";
+const apiKey = process.env.GEMINI_API_KEY || "YOUR_API_KEY_HERE"; // TODO: Use environment variable
 const genAI = new GoogleGenerativeAI(apiKey);
 
 async function listModels() {
