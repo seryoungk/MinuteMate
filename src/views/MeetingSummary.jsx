@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Sparkles, Trash2, Loader2 } from "lucide-react";
 import { useTasks } from "../context/TaskContext";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const PLACEHOLDER_TEXT = `회의 내용을 입력하면 AI가 자동으로 요약하여,
 해야 할 업무의 제목과 상세 내용을 추출해줍니다.
@@ -16,7 +15,7 @@ const MeetingSummary = () => {
   const { addTask } = useTasks();
   const [analyzed, setAnalyzed] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [apiKey] = useState(import.meta.env.VITE_GEMINI_API_KEY || "");
+
 
   // Initialize from localStorage or empty
   const [inputText, setInputText] = useState(() => {
@@ -52,11 +51,6 @@ const MeetingSummary = () => {
   };
 
   const handleAnalyze = async () => {
-    if (!apiKey) {
-      alert("Google API Key를 찾을 수 없습니다. .env 파일을 확인해주세요.");
-      return;
-    }
-
     if (!inputText.trim()) {
       alert("회의 내용을 입력해주세요.");
       return;
@@ -65,52 +59,20 @@ const MeetingSummary = () => {
     setLoading(true);
 
     try {
-      const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+      const response = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ inputText }),
+      });
 
-      const prompt = `
-        You are a helpful project manager assistant.
-        Analyze the following meeting notes and provide a summary and a list of actionable tasks.
-        
-        CRITICAL RULES for Task Extraction:
-        1. **Group by Project/Topic**: Do NOT create separate tasks for every small action. Instead, group related actions under one high-level Task Title (e.g., "Asset Portal Development").
-        2. **Use Checklist for Details**: Put the specific actions into the 'items' list.
-        3. **Assignees in Checklist**: If a task involves multiple people, set the main Assignee to the primary owner (or 'Team'), and specify who does what in the checklist items (e.g., "- Name: Action detail").
-        4. **No Duplicates**: Ensure the same project doesn't appear as multiple cards. Combine them.
-        5. **Priority**: Infer the priority based on urgency and importance ('높음', '보통', '낮음'). Default to '보통'.
-        6. **Explicit Separator**: If the input contains "//", treat it as a HARD SEPARATOR between different projects. Content before and after "//" MUST be in separate task cards.
-        
-        Input Text:
-        ${inputText}
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to analyze');
+      }
 
-        Response Format (JSON only):
-        {
-          "summary": "Full summary in Korean...",
-          "tasks": [
-            {
-              "title": "High-level Project/Topic Title (Korean)",
-              "assignee": "Primary Owner Name",
-              "priority": "높음 | 보통 | 낮음",
-              "description": "Brief context of the project",
-              "items": [
-                "Specific action 1 (e.g. Someone: do something)",
-                "Specific action 2"
-              ]
-            }
-          ]
-        }
-      `;
-
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const text = response.text();
-
-      // Clean up markdown code blocks if present
-      const jsonStr = text
-        .replace(/```json/g, "")
-        .replace(/```/g, "")
-        .trim();
-      const data = JSON.parse(jsonStr);
+      const data = await response.json();
 
       const formattedTasks = data.tasks.map((t) => ({
         ...t,
