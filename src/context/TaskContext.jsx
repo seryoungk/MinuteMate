@@ -44,6 +44,7 @@ export const TaskProvider = ({ children }) => {
         date: newTask.date,
         progress: 0,
         description: newTask.description || '',
+        priority: newTask.priority || '보통',
         items: formattedItems
       };
 
@@ -67,7 +68,7 @@ export const TaskProvider = ({ children }) => {
 
   const updateTask = async (id, updates) => {
     try {
-      const { priority, ...validUpdates } = updates;
+      const { ...validUpdates } = updates;
       
       const { error } = await supabase
         .from('tasks')

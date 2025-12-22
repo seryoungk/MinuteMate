@@ -53,12 +53,27 @@ const TaskCard = ({ task, onClick }) => {
       </div>
 
       {/* Progress Bar - Always show if items exist or progress > 0 */}
-      {(task.progress > 0 || (task.items && task.items.length > 0)) && (
+      {(task.progress >= 0 || (task.items && task.items.length > 0)) && (
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
           <div style={{ flex: 1, height: '4px', background: '#f1f5f9', borderRadius: '2px', overflow: 'hidden' }}>
             <div style={{ width: `${task.progress}%`, height: '100%', background: '#2563eb', borderRadius: '2px', transition: 'width 0.3s' }}></div>
           </div>
           <span style={{ fontSize: '11px', color: '#64748b', width: '24px', textAlign: 'right' }}>{task.progress}%</span>
+          
+          {/* Priority Display */}
+          {task.priority && (
+             <span style={{ 
+               fontSize: '10px', 
+               fontWeight: 600,
+               padding: '2px 6px',
+               borderRadius: '4px',
+               backgroundColor: task.priority === '높음' ? '#fee2e2' : task.priority === '낮음' ? '#dcfce7' : '#f1f5f9',
+               color: task.priority === '높음' ? '#ef4444' : task.priority === '낮음' ? '#166534' : '#64748b',
+               marginLeft: '4px'
+             }}>
+               {task.priority}
+             </span>
+          )}
         </div>
       )}
     </div>

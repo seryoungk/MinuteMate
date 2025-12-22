@@ -105,6 +105,21 @@ const TaskDetailModal = ({ task, onClose }) => {
               <option value="완료">완료</option>
             </select>
 
+            {/* Priority Select */}
+            <select
+              value={task.priority || '보통'}
+              onChange={(e) => updateTask(task.id, { priority: e.target.value })}
+              style={{
+                background: task.priority === '높음' ? '#fee2e2' : task.priority === '낮음' ? '#dcfce7' : '#f1f5f9',
+                color: task.priority === '높음' ? '#ef4444' : task.priority === '낮음' ? '#166534' : '#64748b',
+                padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: 600, border: 'none', cursor: 'pointer'
+              }}
+            >
+              <option value="높음">높음</option>
+              <option value="보통">보통</option>
+              <option value="낮음">낮음</option>
+            </select>
+
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: '#64748b', marginLeft: 'auto' }}>
               <User size={14} /> {task.assignee}
             </div>

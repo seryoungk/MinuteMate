@@ -8,6 +8,8 @@ const PLACEHOLDER_TEXT = `회의 내용을 입력하면 AI가 자동으로 요�
 
 추출된 업무 > [추가하기] 버튼을 클릭하면 
 대시보드에 업무를 자동으로 추가할 수 있습니다.
+
+업무들 사이 '//' 를 넣으면 업무들을 구분하기 더 쉬워져요.
 `;
 
 const MeetingSummary = () => {
@@ -75,6 +77,8 @@ const MeetingSummary = () => {
         2. **Use Checklist for Details**: Put the specific actions into the 'items' list.
         3. **Assignees in Checklist**: If a task involves multiple people, set the main Assignee to the primary owner (or 'Team'), and specify who does what in the checklist items (e.g., "- Name: Action detail").
         4. **No Duplicates**: Ensure the same project doesn't appear as multiple cards. Combine them.
+        5. **Priority**: Infer the priority based on urgency and importance ('높음', '보통', '낮음'). Default to '보통'.
+        6. **Explicit Separator**: If the input contains "//", treat it as a HARD SEPARATOR between different projects. Content before and after "//" MUST be in separate task cards.
         
         Input Text:
         ${inputText}
@@ -86,6 +90,7 @@ const MeetingSummary = () => {
             {
               "title": "High-level Project/Topic Title (Korean)",
               "assignee": "Primary Owner Name",
+              "priority": "높음 | 보통 | 낮음",
               "description": "Brief context of the project",
               "items": [
                 "Specific action 1 (e.g. Someone: do something)",
@@ -109,7 +114,7 @@ const MeetingSummary = () => {
 
       const formattedTasks = data.tasks.map((t) => ({
         ...t,
-        priority: "보통", // Default
+        priority: t.priority || "보통", // Use extracted priority or default
         status: "시작전",
         date: new Date().toISOString().split("T")[0], // Today
         added: false,
@@ -143,6 +148,7 @@ const MeetingSummary = () => {
         day: "numeric",
       }),
       description: taskToAdd.description,
+      priority: taskToAdd.priority,
       items: taskToAdd.items,
     });
 

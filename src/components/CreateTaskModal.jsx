@@ -116,7 +116,7 @@ const CreateTaskModal = ({ onClose }) => {
           </div>
 
           <div
-            style={{ display: "grid", gridTemplateColumns: "1fr", gap: "16px" }}
+            style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}
           >
             {/* Status */}
             <div>
@@ -149,6 +149,40 @@ const CreateTaskModal = ({ onClose }) => {
                 <option value="시작전">시작전</option>
                 <option value="진행중">진행중</option>
                 <option value="완료">완료</option>
+              </select>
+            </div>
+
+            {/* Priority */}
+            <div>
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "13px",
+                  fontWeight: 600,
+                  color: "#64748b",
+                  marginBottom: "6px",
+                }}
+              >
+                우선순위
+              </label>
+              <select
+                value={formData.priority}
+                onChange={(e) =>
+                  setFormData({ ...formData, priority: e.target.value })
+                }
+                style={{
+                  width: "100%",
+                  padding: "10px 12px",
+                  borderRadius: "8px",
+                  border: "1px solid #e2e8f0",
+                  fontSize: "14px",
+                  outline: "none",
+                  background: "#fff",
+                }}
+              >
+                <option value="높음">높음</option>
+                <option value="보통">보통</option>
+                <option value="낮음">낮음</option>
               </select>
             </div>
           </div>
