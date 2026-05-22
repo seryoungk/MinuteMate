@@ -1,14 +1,14 @@
 export const config = {
-  runtime: 'edge', // Using Edge runtime for better performance
+  runtime: "edge", // Using Edge runtime for better performance
 };
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export default async function handler(request) {
-  if (request.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+  if (request.method !== "POST") {
+    return new Response(JSON.stringify({ error: "Method not allowed" }), {
       status: 405,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
   }
 
@@ -17,16 +17,21 @@ export default async function handler(request) {
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
-      return new Response(JSON.stringify({ error: 'Server configuration error: API Key missing' }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return new Response(
+        JSON.stringify({
+          error: "Server configuration error: API Key missing",
+        }),
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
     }
 
     if (!inputText) {
-      return new Response(JSON.stringify({ error: 'Input text is required' }), {
+      return new Response(JSON.stringify({ error: "Input text is required" }), {
         status: 400,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { "Content-Type": "application/json" },
       });
     }
 
@@ -75,25 +80,24 @@ export default async function handler(request) {
       .replace(/```json/g, "")
       .replace(/```/g, "")
       .trim();
-    
+
     // Validate JSON parsing
     try {
-        JSON.parse(jsonStr);
+      JSON.parse(jsonStr);
     } catch (e) {
-        console.error("Partial JSON parse error", e);
-        // It might be worth retrying or returning raw text, but for now let's fail gracefully or just return valid JSON structure error
+      // console.error("Partial JSON parse error", e);
+      // It might be worth retrying or returning raw text, but for now let's fail gracefully or just return valid JSON structure error
     }
 
     return new Response(jsonStr, {
       status: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
-
   } catch (error) {
-    console.error('API Error:', error);
+    // console.error('API Error:', error);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
   }
 }

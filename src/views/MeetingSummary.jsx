@@ -17,7 +17,6 @@ const MeetingSummary = () => {
   const [analyzed, setAnalyzed] = useState(false);
   const [loading, setLoading] = useState(false);
 
-
   // Initialize from localStorage or empty
   const [inputText, setInputText] = useState(() => {
     const saved = localStorage.getItem("meeting_input_text");
@@ -41,7 +40,7 @@ const MeetingSummary = () => {
   const handleReset = () => {
     if (
       window.confirm(
-        "작성 중인 회의 노트가 모두 삭제되고 초기화됩니다. 정말 초기화하시겠습니까?"
+        "작성 중인 회의 노트가 모두 삭제되고 초기화됩니다. 정말 초기화하시겠습니까?",
       )
     ) {
       setInputText("");
@@ -62,7 +61,9 @@ const MeetingSummary = () => {
     try {
       const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
       if (!apiKey) {
-        throw new Error("API 키가 설정되지 않았습니다. .env 파일에 VITE_GEMINI_API_KEY를 설정해주세요.");
+        throw new Error(
+          "API 키가 설정되지 않았습니다. .env 파일에 VITE_GEMINI_API_KEY를 설정해주세요.",
+        );
       }
 
       const genAI = new GoogleGenerativeAI(apiKey);
@@ -128,10 +129,10 @@ const MeetingSummary = () => {
 
       setAnalyzed(true);
     } catch (error) {
-      console.error("AI Error:", error);
+      // console.error("AI Error:", error);
       alert(
         "AI 분석 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.\n" +
-          error.message
+          error.message,
       );
     } finally {
       setLoading(false);
